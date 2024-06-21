@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Doctors</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">Super Admin</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/doctors">Doctors</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/patients">Patients</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/specialities">Specialities</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">Manage Doctors</div>
+        <div class="card-body">
+            <form action="/admin/doctors" method="post">
+                <div class="form-group">
+                    <label for="firstname">Firstname</label>
+                    <input type="text" class="form-control" id="firstname" name="firstname"
+                           placeholder="Enter doctor's firstname" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastname">Lastname</label>
+                    <input type="text" class="form-control" name="lastname" id="lastname"
+                           placeholder="Enter doctor's lastname" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter doctor's phone"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="room">Room</label>
+                    <input type="text" class="form-control" name="room" id="room" placeholder="Enter doctor's room"
+                           required>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="speciality">Speciality</label>
+                    <select class="form-control" id="speciality" name="speciality" required>
+                        <option value="" disabled selected>Select Speciality</option>
+                        <!-- Dynamically populate specialities from backend -->
+                        <option th:each="speciality : ${specialities}" th:value="${speciality.id}"
+                                th:text="${speciality.name}"></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Add Doctor</button>
+            </form>
+            <hr>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Phone</th>
+                    <th>Speciality</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Dynamic content here -->
+                <tr th:each="doctor: ${doctors}">
+                    <td th:text="${doctor.getId()}"></td>
+                    <td th:text="${doctor.getUser().getFirstname()}"></td>
+                    <td th:text="${doctor.getUser().getLastname()}"></td>
+                    <td th:text="${doctor.getUser().getPhone()}"></td>
+                    <td th:text="${doctor.getSpeciality().getName()}"></td>
+                    <td>
+                        <div class="form-inline">
+                            <form action="/admin/doctors/edit" method="post" class="mr-1">
+                                <button class="btn btn-sm btn-warning edit-button" name="id" th:value="${doctor.getId()}">Edit</button>
+                            </form>
+                            <form action="/admin/doctors/delete" method="post">
+                                <button class="btn btn-sm btn-danger delete-button" name="id" th:value="${doctor.getId()}">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

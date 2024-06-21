@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Doctors</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .navbar {
+      margin-bottom: 20px;
+    }
+
+    .card {
+      margin-bottom: 20px;
+    }
+
+    .table th, .table td {
+      vertical-align: middle;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.html">Super Admin</a>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/doctors">Doctors</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/patients">Patients</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/specialities">Specialities</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <div class="card">
+    <div class="card-header bg-primary text-white">Update Doctors</div>
+    <div class="card-body">
+      <form action="/admin/doctors/update" method="post">
+        <div class="form-group">
+          <label for="firstname">Firstname</label>
+          <input type="text" class="form-control" id="firstname" name="firstname"
+                 placeholder="Enter doctor's firstname" th:value="${doctor.getUser().getFirstname()}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="lastname">Lastname</label>
+          <input type="text" class="form-control" name="lastname" id="lastname"
+                 placeholder="Enter doctor's lastname" th:value="${doctor.getUser().getLastname()}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="text" class="form-control" name="phone" id="phone"
+                 placeholder="Enter doctor's phone" th:value="${doctor.getUser().getPhone()}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="room">Room</label>
+          <input type="text" class="form-control" name="room" id="room" placeholder="Enter doctor's room"
+                 th:value="${doctor.getRoom().getName()}" required>
+        </div>
+
+
+        <div class="form-group">
+          <label for="speciality">Speciality</label>
+          <select class="form-control" id="speciality" name="speciality" required>
+            <option th:value="${doctor.getSpeciality().getId()}" th:text="${doctor.getSpeciality().getName()}"
+                    ></option>
+            <!-- Dynamically populate specialities from backend -->
+            <option th:each="speciality : ${specialities}" th:value="${speciality.id}"
+                    th:text="${speciality.name}"></option>
+          </select>
+        </div>
+        <input type="hidden" name="doctorId" th:value="${doctor.getId()}">
+        <input type="hidden" name="userId" th:value="${doctor.getUser().getId()}">
+
+
+        <button type="submit" class="btn btn-primary btn-block">Update Doctor</button>
+      </form>
+      <hr>
+    </div>
+  </div>
+</div>
+</body>
+</html>

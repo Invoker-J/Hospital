@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Admission Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f0f4f7;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .navbar {
+            width: 25%;
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #495057;
+            border-radius: 5px 0 0 5px;
+            background-color: #495057;
+            color: #fff;
+            outline: none;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            border: 1px solid #495057;
+            border-radius: 0 5px 5px 0;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            outline: none;
+        }
+
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+
+        .add-patient-form {
+            margin-bottom: 20px;
+        }
+
+        .add-patient-form input, .add-patient-form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #495057;
+            border-radius: 5px;
+            background-color: #495057;
+            color: #fff;
+            outline: none;
+        }
+
+        .add-patient-form button {
+            background-color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-patient-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #495057;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .user-item.selected {
+            background-color: #007bff;
+        }
+
+        .user-item button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .user-item button:hover {
+            background-color: #0056b3;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-left: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-row label {
+            margin-right: 10px;
+            width: 100px;
+        }
+
+        .form-row select, .form-row input {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 1;
+        }
+
+        .form-row button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-row button:hover {
+            background-color: #0056b3;
+        }
+
+
+        .form-row textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .admission-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .admission-card h3 {
+            margin-top: 0;
+        }
+
+        .admission-card button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .admission-card button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="navbar">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search for user...">
+            <button id="searchButton">Search</button>
+        </div>
+        <div class="user-list">
+            <form th:action="@{/administration}" method="post">
+                <div th:each="patient : ${patients}"
+                     th:classappend="${selectedPatient != null and selectedPatient.id == patient.id} ? 'selected'"
+                     class="user-item">
+                    <div th:text="${patient.getUser().getFirstname()} + ' ' + ${patient.getUser().getLastname()} + ' ' + ${patient.getUser().getPhone()}"></div>
+                    <button type="submit" th:name="selectedPatientId" th:value="${patient.id}">Select</button>
+                </div>
+            </form>
+
+        </div>
+        <form class="add-patient-form" action="/administration/addPatient" method="get">
+            <button type="submit">Add New Patient</button>
+        </form>
+    </div>
+    <div class="content">
+        <h1>Welcome to the Hospital Admission Page</h1>
+        <div th:if="${selectedPatient != null}">
+            <h2>Patient Information</h2>
+            <p><strong>Name:</strong> <span th:text="${selectedPatient.getUser().getFirstname()}"></span></p>
+            <p><strong>Phone:</strong> <span th:text="${selectedPatient.getUser().getPhone()}"></span></p>
+            <!-- Add more patient details as needed -->
+            <form action="/administration/admission" method="post">
+                <div class="form-row">
+                    <label for="doctor">Doctor:</label>
+                    <select id="doctor" name="doctorId">
+                        <option th:each="doctor : ${doctors}" th:value="${doctor.getId()}"
+                                th:text="${doctor.getUser().getFirstname()} + '  ' + ${doctor.getUser().getLastname()}+ ' (' + ${doctor.getSpeciality().getName()} +')'"></option>
+                    </select>
+                    <label for="dateTime">Date & Time:</label>
+                    <input type="datetime-local" id="dateTime" name="dateTime">
+                    <button type="submit">Subscribe</button>
+                </div>
+                <div class="form-row">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4"></textarea>
+                </div>
+                <input type="hidden" name="patientId" th:value="${selectedPatient.getId()}">
+            </form>
+
+            <h2>Admissions</h2>
+            <div th:each="admission : ${admissions}">
+                <div class="admission-card">
+                    <h3>Admission ID: <span th:text="${admission.id}"></span></h3>
+                    <p><strong>Doctor:</strong> <span
+                            th:text="${admission.getDoctor().getUser().getFirstname()} + '  ' + ${admission.getDoctor().getUser().getLastname()} + ' ( ' + ${admission.getDoctor().getSpeciality().getName()}+')' "></span>
+                    </p>
+
+                    <p><strong>Date & Time:</strong> <span th:text="${admission.admissionDateTime}"></span></p>
+                    <p><strong>Description:</strong> <span th:text="${admission.description}"></span></p>
+                    <p><strong>Procedure Price:</strong> <span th:text="${admission.getSumOfProcedure()}"></span></p>
+                    <p><strong>Arrival Status:</strong>
+                        <span th:if="${admission.isArrivedOnTime()}">Arrived on time</span>
+                        <span th:if="${!admission.isArrivedOnTime()}">Arrive on time</span>
+                    </p>
+
+
+
+                    <div th:if="${!(admission.getPatient().getStatus().name() == 'BOOKED' && admission.getStatus().name() != 'COMPLETED' && admission.getProcedures().isEmpty())}">
+                        <form action="/administration/info" method="post">
+                            <input type="hidden" name="admissionId" th:value="${admission.getId()}">
+                            <button type="submit" class="btn btn-success btn-info">Info</button>
+                        </form>
+                    </div>
+
+                    <div th:if="${admission.getPatient().getStatus().name() == 'BOOKED' && admission.getStatus().name() != 'COMPLETED' &&
+              admission.getProcedures().isEmpty()}">
+
+                        <form action="/administration/admission/enter" method="post">
+                            <input type="hidden" name="admissionId" th:value="${admission.getId()}">
+                            <button type="submit" class="btn btn-primary">Entered</button>
+                        </form>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function submitEnterForm(admissionId, patientId, dateTime, description) {
+        const formData = {
+            admissionId: admissionId,
+            patientId: patientId,
+            dateTime: dateTime,
+            description: description
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        };
+
+        fetch('http://localhost:8080/administration/admission/enter', requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // Handle success as needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle errors as needed
+            });
+    }
+
+</script>
+</body>
+</html>

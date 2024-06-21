@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f0f4f7;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .navbar {
+            width: 25%;
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #495057;
+            border-radius: 5px 0 0 5px;
+            background-color: #495057;
+            color: #fff;
+            outline: none;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            border: 1px solid #495057;
+            border-radius: 0 5px 5px 0;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            outline: none;
+        }
+
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #495057;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .user-item.selected {
+            background-color: #007bff;
+        }
+
+        .user-item button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .user-item button:hover {
+            background-color: #0056b3;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-left: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-row label {
+            margin-right: 10px;
+            width: 100px;
+        }
+
+        .form-row select, .form-row input, .form-row textarea {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 1;
+        }
+
+        .form-row textarea {
+            flex: 1;
+            height: 100px;
+        }
+
+        .form-row button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-row button:hover {
+            background-color: #0056b3;
+        }
+
+        .procedure-list {
+            margin-top: 20px;
+        }
+
+        .procedure-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="navbar">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search for patient...">
+            <button id="searchButton">Search</button>
+        </div>
+        <div class="user-list">
+            <form th:action="@{/doctor}" method="post">
+                <div th:each="patient : ${patients}"
+                     th:classappend="${selectedPatient != null and selectedPatient.id == patient.id} ? 'selected'"
+                     class="user-item">
+                    <div th:text="${patient.getUser().getFirstname()} + ' ' + ${patient.getUser().getLastname()} + ' ' + ${patient.getUser().getPhone()} + ' ' + ${patient.getStatus().name()}"></div>
+                    <button type="submit" th:name="selectedPatientId" th:value="${patient.id}">Select</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="content">
+        <h1>Doctor's Dashboard</h1>
+        <div th:if="${selectedPatient != null}">
+            <h2>Patient Information</h2>
+            <p><strong>Name:</strong> <span th:text="${selectedPatient.getUser().getFirstname()} + ' ' + ${selectedPatient.getUser().getLastname()} "></span></p>
+            <p><strong>Phone:</strong> <span th:text="${selectedPatient.getUser().getPhone()}"></span></p>
+            <!-- Add more patient details as needed -->
+
+            <h2>Procedure</h2>
+            <div class="form-row">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title">
+            </div>
+            <div class="form-row">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <div class="form-row">
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price">
+            </div>
+            <div class="form-row">
+                <button type="button" onclick="addProcedure()">Add Procedure</button>
+            </div>
+
+            <h2>Procedure List</h2>
+            <div id="procedureList" class="procedure-list">
+                <!-- Procedures will be added here dynamically -->
+            </div>
+            <div class="form-row">
+                <input type="hidden" name="test" th:value="${admissions}">
+                <button type="button" onclick="submitProcedures()">Submit Procedures</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let procedures = [];
+
+    function addProcedure() {
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const price = document.getElementById('price').value;
+
+        if (title && description && price) {
+            const procedure = { title, description, price };
+            procedures.push(procedure);
+
+            const procedureList = document.getElementById('procedureList');
+            const procedureItem = document.createElement('div');
+            procedureItem.className = 'procedure-item';
+            procedureItem.innerHTML = `
+                <p><strong>Title:</strong> ${title}</p>
+                <p><strong>Description:</strong> ${description}</p>
+                <p><strong>Price:</strong> $${price}</p>
+            `;
+            procedureList.appendChild(procedureItem);
+
+            // Clear the input fields
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('price').value = '';
+        } else {
+            alert('Please fill in all fields.');
+        }
+    }
+
+    function submitProcedures() {
+        const selectedPatientElement = document.querySelector('.user-item.selected button');
+        const selectedPatientId = selectedPatientElement ? selectedPatientElement.value : null;
+
+        if (!selectedPatientId) {
+            alert('No patient selected!');
+            return;
+        }
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ patientId: selectedPatientId, procedures })
+        };
+
+        fetch('http://localhost:8080/doctor/saveProcedure', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                alert('Procedures submitted successfully!');
+                // Clear the procedures list
+                procedures = [];
+                document.getElementById('procedureList').innerHTML = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+</body>
+</html>

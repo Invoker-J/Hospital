@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedures Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Procedures Information</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Procedure Title</th>
+            <th>Description</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Example procedure (replace with server-side rendering) -->
+        <tr th:each="procedure: ${admission.getProcedures()}">
+            <td th:text="${procedure.title}">Procedure Title 1</td>
+            <td th:text="${procedure.description}">Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
+            <td th:text="'$'+${procedure.price}"></td>
+        </tr>
+        <!-- Add more procedure rows as needed -->
+        </tbody>
+    </table>
+
+    <!-- Back button -->
+    <div class="back-button">
+        <a href="http://localhost:8080/administration" class="btn btn-primary">Back</a>
+    </div>
+
+
+</div>
+</body>
+</html>
